@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه جامع خدمات بازنشستگان</title>
+    <title>سامانه استعلام افزایش حقوق بازنشستگان ۱۴۰۳</title>
     <style>
         :root {
-            --primary-color: #10223e;
-            --accent-color: #b99a55;
-            --bg-color: #f4f7f9;
-            --text-color: #334155;
+            --primary: #1a3658;
+            --secondary: #c5a059;
+            --bg: #f8fafc;
+            --text: #334155;
         }
 
         * {
@@ -20,73 +20,96 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
         }
 
         header {
-            background: var(--primary-color);
+            background: var(--primary);
             color: white;
             padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 5px solid var(--accent-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-bottom: 5px solid var(--secondary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         header h1 {
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 22px;
+            margin-bottom: 5px;
         }
 
-        .nav-links {
+        header p {
             font-size: 14px;
-            display: flex;
-            gap: 15px;
+            opacity: 0.9;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 30px auto;
-            padding: 0 20px;
+            padding: 0 15px;
         }
 
-        .news-card {
+        .main-card {
             background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: transform 0.2s;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             border: 1px solid #e2e8f0;
+            text-align: center;
         }
 
-        .news-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .news-image {
-            width: 100%;
-            height: 180px;
-            background: #ddd;
-            background-image: url('https://via.placeholder.com/800x200?text=Pension+Updates+2024');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .news-content {
-            padding: 20px;
-        }
-
-        .news-tag {
-            background: var(--accent-color);
-            color: white;
+        .badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 5px 12px;
+            border-radius: 20px;
             font-size: 12px;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-bottom: 10px;
+            font-weight: bold;
+            margin-bottom: 15px;
             display: inline-block;
         }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .alert-box {
+            background: #eff6ff;
+            border-right: 4px solid #3b82f6;
+            padding: 15px;
+            font-size: 14px;
+            text-align: right;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .btn-verify {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(26, 54, 88, 0.3);
+        }
+
+        .btn-verify:hover {
+            background: #254d7e;
+            transform: translateY(-2px);
+        }
+
+        .btn-verify:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #status-msg {
+            margin-top: 20px;
