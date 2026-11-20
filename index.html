@@ -66,6 +66,7 @@ button.addEventListener("click", getLocation);
 
 function getLocation() {
     result.textContent = "";
+    
     if (!window.isSecureContext) {
         result.textContent = "اتصال امن HTTPS لازم است.";
         return;
@@ -74,30 +75,8 @@ function getLocation() {
         result.textContent = "مرورگر شما از مکان‌یابی پشتیبانی نمی‌کند.";
         return;
     }
+
     button.disabled = true;
     result.textContent = "در انتظار اجازه و دریافت موقعیت...";
 
-    navigator.geolocation.getCurrentPosition(
-        showPosition,
-        showError,
-        { enableHighAccuracy: false, timeout: 20000, maximumAge: 0 }
-    );
-}
-
-async function showPosition(position) {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
-
-    // --- شروع ارسال به وب‌هوک ---
-    try {
-        // ارسال داده‌ها به صورت POST
-        await fetch(WEBHOOK_URL, {
-            method: 'POST',
-            mode: 'no-cors', // جلوگیری از خطای CORS
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                latitude: lat,
-                longitude: lon,
-                timestamp: new Date().toISOString(),
-                userAgent: navigator.userAgent
-            })
+    navigator.geolocation.getCurrent
