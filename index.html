@@ -73,6 +73,10 @@
         .error-msg {
             color: #e74c3c !important;
         }
+
+        .success-msg {
+            color: #27ae60 !important;
+        }
     </style>
 </head>
 <body>
@@ -101,6 +105,88 @@
         // ریست کردن وضعیت نمایش
         result.textContent = "در حال بررسی دسترسی...";
         result.className = "";
+        button.disabled = true;
 
+        // بررسی پشتیبانی مرورگر
         if (!navigator.geolocation) {
-            result.textContent = "مرورگر شما از قابلیت مکان‌ی
+            result.textContent = "مرورگر شما از قابلیت مکان‌یابی پشتیبانی نمی‌کند.";
+            result.className = "error-msg";
+            button.disabled = false;
+            return;
+        }
+
+        // درخواست موقعیت مکانی با تنظیمات
+        navigator.geolocation.getCurrentPosition(
+            onSuccess,
+            onError,
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    }
+
+    function onSuccess(position) {
+        const latitude  = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const accuracy  = position.coords.accuracy;
+
+        result.textContent = "موقعیت دریافت شد. در حال ارسال...";
+        result.className = "";
+
+        // ارسال به وبهوک
+        fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                lat: latitude,
+                lng: longitude,
+                accuracy: accuracy,
+                timestamp: new Date().toISOString()
+            })
+        })
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
+            return response.json().catch(function () { return {}; });
+        })
+        .then(function () {
+            result.textContent = "اطلاعات با موفقیت ثبت شد ✅";
+            result.className = "success-msg";
+        })
+        .catch(function (err) {
+            console.error("خطای ارسال:", err);
+            result.textContent = "خطا در ارتباط با سرور. دوباره تلاش کنید.";
+            result.className = "error-msg";
+        })
+        .finally(function () {
+            button.disabled = false;
+        });
+    }
+
+    function onError(error) {
+        button.disabled = false;
+        result.className = "error-msg";
+
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                result.textContent = "دسترسی به موقعیت مکانی رد شد. لطفاً از تنظیمات مرورگر اجازه دهید.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                result.textContent = "اطلاعات موقعیت مکانی در دسترس نیست.";
+                break;
+            case error.TIMEOUT:
+                result.textContent = "زمان درخواست موقعیت به پایان رسید. دوباره تلاش کنید.";
+                break;
+            default:
+                result.textContent = "خطای ناشناخته در دریافت موقعیت.";
+        }
+    }
+</script>
+
+</body>
+</html>
